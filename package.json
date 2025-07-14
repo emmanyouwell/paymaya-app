@@ -1,8 +1,8 @@
 {
-  "name": "electron",
+  "name": "geniex-paymaya",
   "version": "1.0.0",
   "build": {
-    "appId": "com.electron-example.app",
+    "appId": "com.geniex-paymaya.app",
     "publish": [
       {
         "provider": "github"
@@ -15,7 +15,7 @@
       "target": "nsis"
     }
   },
-  "description": "My first electron app 2025",
+  "description": "Desktop application for integrating paymaya terminals to POS systems.",
   "main": "main.js",
   "scripts": {
     "start": "electron-forge start",
@@ -39,6 +39,9 @@
     "electron": "^37.2.1"
   },
   "dependencies": {
-    "electron-squirrel-startup": "^1.0.1"
+    "child_process": "^1.0.2",
+    "electron-squirrel-startup": "^1.0.1",
+    "electron-store": "^10.1.0",
+    "serialport": "^13.0.0"
   }
 }

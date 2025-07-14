@@ -1,10 +1,20 @@
-const information = document.getElementById('info')
-information.innerText = `This app is using Chrome (v${versions.chrome()}), Node.js (v${versions.node()}), and Electron (v${versions.electron()})`
+const port = document.getElementById('com-port');
+const terminal = document.getElementById('file-path');
+const btn = document.getElementById('btn')
 
-const func = async () => {
-    const response = await window.versions.ping()
-    information.innerText += `\nResponse from main process: ${response}`
-    console.log(`Response from main process: ${response}`)
-}
+btn.addEventListener('click', ()=>{
+    window.api.runScript({amount:"100", method: "GCASH"});
+})
 
-func()
+window.settingsAPI.getSettings().then((settings) => {
+    console.log("Current settings:", settings);
+    port.textContent = settings.comPort || "Not selected";
+    terminal.textContent = settings.filePath || "Not selected";
+})
+
+window.settingsAPI.onSettingsUpdated((newSettings) => {
+    console.log("Settings updated:", newSettings);
+    port.textContent = newSettings.comPort || "Not selected";
+    terminal.textContent = newSettings.filePath || "Not selected";
+})
+

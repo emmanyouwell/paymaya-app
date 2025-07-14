@@ -8,7 +8,7 @@ module.exports = {
       config: {
         repository: {
           owner: 'emmanyouwell',
-          name: 'electron-app'
+          name: 'paymaya-app'
         },
         prerelease: false,
         draft: true
