@@ -38,18 +38,18 @@ const createWindow = () => {
                             return;
                         }
 
-                        const portNames = ports.map((port) => port.path); // e.g., ['COM3', 'COM7']
+                        const portNames = ports.map((port) => { return {path: port.path, name: port.friendlyName}}); // e.g., ['COM3', 'COM7']
 
                         const { response } = await dialog.showMessageBox(win, {
                             type: 'question',
-                            buttons: [...portNames, 'Cancel'],
+                            buttons: [...portNames.map(port=>port.name), 'Cancel'],
                             defaultId: 0,
                             title: 'Select COM Port',
                             message: 'Choose a COM Port:',
                         });
 
                         if (response < portNames.length) {
-                            settings.comPort = portNames[response]; // e.g. 'COM3'
+                            settings.comPort = portNames[response].path; // e.g. 'COM3'
                             store.set('comPort', settings.comPort);
                             win.webContents.send('settings-updated', settings);
                         }
