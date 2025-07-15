@@ -134,7 +134,7 @@ ipcMain.handle('run-py', async (event, formData) => {
 
 app.whenReady().then(() => {
     const server = express();
-    server.use(express.static(path.join(__dirname, 'out')))
+    server.use(express.static(path.join(__dirname, 'client', 'out')))
     server.listen(3000, () => {
         console.log('Server is running on http://localhost:3000');
         createWindow()
