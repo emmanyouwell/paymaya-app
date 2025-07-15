@@ -16,6 +16,9 @@ module.exports = {
     }
   ],
   packagerConfig: {
+    extraResource: [
+      'scripts/remote-serial-pay.exe'
+    ],
     asar: true,
   },
   rebuildConfig: {},

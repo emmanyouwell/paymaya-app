@@ -3,7 +3,7 @@ const path = require('node:path')
 const { exec } = require('node:child_process')
 const Store = require('electron-store').default
 const store = new Store()
-const {SerialPort} = require('serialport')
+const { SerialPort } = require('serialport')
 SerialPort.list().then(console.log)
 let settings = {
     comPort: store.get('comPort') || null,
@@ -38,11 +38,11 @@ const createWindow = () => {
                             return;
                         }
 
-                        const portNames = ports.map((port) => { return {path: port.path, name: port.friendlyName}}); // e.g., ['COM3', 'COM7']
+                        const portNames = ports.map((port) => { return { path: port.path, name: port.friendlyName } }); // e.g., ['COM3', 'COM7']
 
                         const { response } = await dialog.showMessageBox(win, {
                             type: 'question',
-                            buttons: [...portNames.map(port=>port.name), 'Cancel'],
+                            buttons: [...portNames.map(port => port.name), 'Cancel'],
                             defaultId: 0,
                             title: 'Select COM Port',
                             message: 'Choose a COM Port:',
@@ -52,20 +52,6 @@ const createWindow = () => {
                             settings.comPort = portNames[response].path; // e.g. 'COM3'
                             store.set('comPort', settings.comPort);
                             win.webContents.send('settings-updated', settings);
-                        }
-                    },
-                },
-                {
-                    label: 'Select File Path',
-                    click: async () => {
-                        const { canceled, filePaths } = await dialog.showOpenDialog(win, {
-                            properties: ['openFile'],
-                        })
-
-                        if (!canceled && filePaths.length > 0) {
-                            settings.filePath = filePaths[0]
-                            store.set('filePath', settings.filePath)
-                            win.webContents.send('settings-updated', settings)
                         }
                     },
                 },
@@ -96,7 +82,9 @@ ipcMain.handle('run-py', async (event, formData) => {
             return { status: 400, error: "Invalid payment method." }
         }
         let params = []
-        const terminal_filepath = settings.filePath || store.get('filePath')
+        const terminal_filepath = app.isPackaged
+            ? path.join(process.resourcesPath, 'scripts', 'remote-serial-pay.exe')
+            : path.join(__dirname, 'scripts', 'remote-serial-pay.exe');
         let amt = amount.replace(/\./g, "").replace(/,/g, "")
         let tenderType = ""
         if (method === "CARD") {
@@ -125,7 +113,7 @@ ipcMain.handle('run-py', async (event, formData) => {
             params.push('--customTenderRequestField "qr:qrph"')
         }
         params = params.join(' ')
-        const script = `python "${terminal_filepath}" ${params}`
+        const script = `${terminal_filepath} ${params}`
         exec(script, { shell: 'powershell.exe' }, (error, stdout) => {
             if (error) {
                 console.error(`Error executing command: ${error.message}`)
