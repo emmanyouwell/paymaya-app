@@ -7,7 +7,7 @@ module.exports = {
       name: '@electron-forge/publisher-github',
       config: {
         repository: {
-          owner: 'emmanyouwell',
+          owner: 'gnxdev',
           name: 'paymaya-app'
         },
         prerelease: false,

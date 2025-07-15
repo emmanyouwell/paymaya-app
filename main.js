@@ -4,6 +4,7 @@ const { exec } = require('node:child_process')
 const Store = require('electron-store').default
 const store = new Store()
 const { SerialPort } = require('serialport')
+const express = require('express')
 SerialPort.list().then(console.log)
 let settings = {
     comPort: store.get('comPort') || null,
@@ -13,7 +14,7 @@ let settings = {
 const createWindow = () => {
     const win = new BrowserWindow({
         width: 800,
-        height: 600,
+        height: 700,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
             nodeIntegration: false,
@@ -61,7 +62,8 @@ const createWindow = () => {
 
     const menu = Menu.buildFromTemplate(template)
     Menu.setApplicationMenu(menu)
-    win.loadFile('index.html')
+    // win.loadFile(path.join(__dirname, 'client', 'out', 'index.html'))
+    win.loadURL('http://localhost:3000')
 }
 
 ipcMain.handle('get-settings', () => settings)
@@ -131,12 +133,13 @@ ipcMain.handle('run-py', async (event, formData) => {
 
 
 app.whenReady().then(() => {
-    createWindow()
-    app.on('activate', () => {
-        if (BrowserWindow.getAllWindows().length === 0) {
-            createWindow()
-        }
+    const server = express();
+    server.use(express.static(path.join(__dirname, 'out')))
+    server.listen(3000, () => {
+        console.log('Server is running on http://localhost:3000');
+        createWindow()
     })
+    
 })
 
 app.on('window-all-closed', () => {
