@@ -1,5 +1,5 @@
 'use client';
-import React from 'react'
+import React, { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import {
     Card,
@@ -13,12 +13,40 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Image from "next/image"
-import { Delete } from 'lucide-react';
+import { Delete, CreditCard } from 'lucide-react';
+
 const page = () => {
+    const [amount, setAmount] = useState('');
+    const [selectedPayment, setSelectedPayment] = useState('');
+
+    const handleNumberClick = (value: string) => {
+        if (value === '.') {
+            if (amount.includes('.')) return;
+            setAmount(amount === '' ? '0.' : amount + value);
+        } else {
+            setAmount(amount + value);
+        }
+    };
+
+    const handleDelete = () => {
+        setAmount(amount.slice(0, -1));
+    };
+
+    const handleClear = () => {
+        setAmount('');
+    };
+
+    const handlePaymentSelect = (method: string) => {
+    if (selectedPayment === method) {
+        setSelectedPayment('');
+    } else {
+        setSelectedPayment(method);
+    }
+};
     return (
-        <div className="flex flex-col items-center h-[calc(100vh-2rem)] p-8 pb-20 gap-16 sm:p-8 font-[family-name:var(--font-geist-sans)]">
+        <div className="flex flex-col items-center h-[calc(100vh-2rem)] p-6 pb-20 gap-16 sm:p-8 font-[family-name:var(--font-geist-sans)]">
             <main className="flex flex-col gap-[32px] row-start-2 items-center justify-center">
-                <Card className="w-[35vw] h-auto">
+                <Card className="w-[45vw] h-auto">
                     <CardHeader className="flex flex-col items-center">
                         <CardTitle>
                             <Image
@@ -33,48 +61,82 @@ const page = () => {
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <div className="flex flex-col items-center gap-4">
+                        <div className="flex items-start gap-4">
                             <form className="w-full">
-                                <div className="flex flex-col gap-6 w-max mx-auto">
+                                <div className="flex flex-col gap-4 w-max mx-auto">
                                     <div className="grid w-full gap-2">
                                         <Label htmlFor="number">Amount</Label>
                                         <Input
                                             id="number"
-                                            type="number"
+                                            type="text"
+                                            value={amount}
+                                            onChange={(e) => setAmount(e.target.value)}
                                             placeholder="0.00"
                                             className="h-12 text-2xl"
                                         />
                                     </div>
                                     <div className="grid grid-cols-3 place-items-center gap-2 w-max mx-auto">
-                                        <Button variant="outline" className="w-20 h-20 text-lg">1</Button>
-                                        <Button variant="outline" className="w-20 h-20 text-lg">2</Button>
-                                        <Button variant="outline" className="w-20 h-20 text-lg">3</Button>
-                                        <Button variant="outline" className="w-20 h-20 text-lg">4</Button>
-                                        <Button variant="outline" className="w-20 h-20 text-lg">5</Button>
-                                        <Button variant="outline" className="w-20 h-20 text-lg">6</Button>
-                                        <Button variant="outline" className="w-20 h-20 text-lg">7</Button>
-                                        <Button variant="outline" className="w-20 h-20 text-lg">8</Button>
-                                        <Button variant="outline" className="w-20 h-20 text-lg">9</Button>
-                                        <Button variant="outline" className="w-20 h-20 text-lg">.</Button>
-                                        <Button variant="outline" className="w-20 h-20 text-lg">0</Button>
-                                        <Button variant="outline" className="w-20 h-20 text-lg"><Delete /></Button>
+                                        <Button type="button" variant="outline" className="w-20 h-18 text-lg" onClick={() => handleNumberClick('1')}>1</Button>
+                                        <Button type="button" variant="outline" className="w-20 h-18 text-lg" onClick={() => handleNumberClick('2')}>2</Button>
+                                        <Button type="button" variant="outline" className="w-20 h-18 text-lg" onClick={() => handleNumberClick('3')}>3</Button>
+                                        <Button type="button" variant="outline" className="w-20 h-18 text-lg" onClick={() => handleNumberClick('4')}>4</Button>
+                                        <Button type="button" variant="outline" className="w-20 h-18 text-lg" onClick={() => handleNumberClick('5')}>5</Button>
+                                        <Button type="button" variant="outline" className="w-20 h-18 text-lg" onClick={() => handleNumberClick('6')}>6</Button>
+                                        <Button type="button" variant="outline" className="w-20 h-18 text-lg" onClick={() => handleNumberClick('7')}>7</Button>
+                                        <Button type="button" variant="outline" className="w-20 h-18 text-lg" onClick={() => handleNumberClick('8')}>8</Button>
+                                        <Button type="button" variant="outline" className="w-20 h-18 text-lg" onClick={() => handleNumberClick('9')}>9</Button>
+                                        <Button type="button" variant="outline" className="w-20 h-18 text-lg" onClick={() => handleNumberClick('.')}>.</Button>
+                                        <Button type="button" variant="outline" className="w-20 h-18 text-lg" onClick={() => handleNumberClick('0')}>0</Button>
+                                        <Button type="button" variant="outline" className="w-20 h-18 text-lg" onClick={handleDelete}><Delete /></Button>
                                     </div>
                                 </div>
                             </form>
                             <div className="w-full">
                                 <Label>Payment Method</Label>
-                                <div className="flex flex-col gap-2 mt-2">
-                                    <Button variant="outline" className="w-full">
-                                        Card
+                                <div className="grid grid-cols-2 gap-2 mt-2">
+                                    <Button 
+                                        variant={selectedPayment === 'card' ? 'default' : 'outline'} 
+                                        className={`w-full h-12 transition-colors ${
+                                            selectedPayment === 'card' 
+                                                ? 'bg-green-200 border border-green-600 text-gray-800 hover:bg-green-300' 
+                                                : 'hover:bg-gray-100'
+                                        }`}
+                                        onClick={() => handlePaymentSelect('card')}
+                                    >
+                                        <CreditCard size={40} color="#db0000" strokeWidth={1.5} />Card
                                     </Button>
-                                    <Button variant="outline" className="w-full">
-                                        <Image src="/assets/GCash-Logo.png" alt="GCash Logo" width={50} height={50} className="inline-block mr-2" />
+                                    <Button 
+                                        variant={selectedPayment === 'gcash' ? 'default' : 'outline'} 
+                                        className={`w-full h-12 transition-colors ${
+                                            selectedPayment === 'gcash' 
+                                                ? 'bg-green-200 border border-green-600 hover:bg-green-300' 
+                                                : 'hover:bg-gray-100'
+                                        }`}
+                                        onClick={() => handlePaymentSelect('gcash')}
+                                    >
+                                        <Image src="/assets/GCash-Logo.png" alt="GCash Logo" width={80} height={80} className="inline-block mr-2" />
                                     </Button>
-                                    <Button variant="outline" className="w-full">
-                                        MAYA
+                                    <Button 
+                                        variant={selectedPayment === 'maya' ? 'default' : 'outline'} 
+                                        className={`w-full h-12 transition-colors ${
+                                            selectedPayment === 'maya' 
+                                                ? 'bg-green-200 border border-green-600 hover:bg-green-300' 
+                                                : 'hover:bg-gray-100'
+                                        }`}
+                                        onClick={() => handlePaymentSelect('maya')}
+                                    >
+                                        <Image src="/assets/maya-logo.png" alt="Maya Logo" width={60} height={60} className="inline-block mr-2" />
                                     </Button>
-                                    <Button variant="outline" className="w-full">
-                                        QRPH
+                                    <Button 
+                                        variant={selectedPayment === 'qrph' ? 'default' : 'outline'} 
+                                        className={`w-full h-12 transition-colors ${
+                                            selectedPayment === 'qrph' 
+                                                ? 'bg-green-200 border border-green-600 hover:bg-green-300' 
+                                                : 'hover:bg-gray-100'
+                                        }`}
+                                        onClick={() => handlePaymentSelect('qrph')}
+                                    >
+                                        <Image src="/assets/QRPh-logo.png" alt="QRPh Logo" width={70} height={70} className="inline-block mr-2" />
                                     </Button>
                                 </div>
                             </div>
@@ -84,7 +146,7 @@ const page = () => {
                         <Button type="submit" className="flex-1 bg-green-800">
                             Pay
                         </Button>
-                        <Button variant="destructive" className="flex-1">
+                        <Button variant="destructive" className="flex-1" onClick={handleClear}>
                             Cancel
                         </Button>
                     </CardFooter>
